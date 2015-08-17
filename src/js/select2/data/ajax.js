@@ -42,6 +42,7 @@ define([
   AjaxAdapter.prototype.query = function (params, callback) {
     var matches = [];
     var self = this;
+	var $element = self.$element;
 
     if (this._request != null) {
       // JSONP requests cannot always be aborted
@@ -56,16 +57,16 @@ define([
       type: 'GET'
     }, this.ajaxOptions);
 
-    if (typeof options.url === 'function') {
-      options.url = options.url(params);
+	  if (typeof options.url === 'function') {
+      options.url = options.url.call($element, params);
     }
 
     if (typeof options.data === 'function') {
-      options.data = options.data(params);
+      options.data = options.data.call($element, params);
     }
 
     function request () {
-      var $request = options.transport(options, function (data) {
+		var $request = options.transport.call($element, options, function (data) {
         var results = self.processResults(data, params);
 
         if (self.options.get('debug') && window.console && console.error) {
